@@ -4,7 +4,6 @@ class Mancala:
     def __init__(self):
         #1st slot is second players bank. 7th slot is first players bank.
         self._board = [0,4,4,4,4,4,4,0,4,4,4,4,4,4]
-        pass
 
     def _valid_move(self, index, player):
         if index < 0 or index > 14:
@@ -19,12 +18,16 @@ class Mancala:
             return True
 
     def move(self, index, player):
+        #First return condintional signles that the move was succsesful. The second return condintional specifies if the person getts another turn.
+        #check for valid moves
         if not self._valid_move(index, player):
-            return False
+            return False, False
         
+        #set up variables
         counter = self._board[index]
         self._board[index] = 0
         slot = index + 1
+        #move around the board placing one marble until the pile/counter is empty
         while counter > 0:
             if slot > 13:
                 slot = 0
@@ -36,19 +39,23 @@ class Mancala:
                 self._board[slot] += 1
             slot += 1
             counter -= 1
-
-        return True
+        #if the last slot was the persons goal they get an extra turn.
+        if slot - 1 == 0 or slot - 1 == 7:
+            return True, True
+        return True, False
     
 
 
-    def _player_colect(self, player):
+    def _player_collect(self, player):
         collection = 0
+        #get what slots need to be added up
         if player == 1:
             start = 1
             end = 6
         else:
             start = 8
             end = 13
+        #go through the piles to collect any remainding marbles to put in the persons goal
         for i in range(start, end):
             collection += self._board[i]
         if player == 1:
@@ -75,12 +82,14 @@ class Mancala:
                 player1 = False
             if self._board[-i] > 0:
                 player2 = False
+        #if someone has no marbles game ends and the other person gets any marbles on their side
         if player1 == True:
-            self._player_colect(2)
+            self._player_collect(2)
 
-        if player2 == True:
-            self._player_colect(1)
+        elif player2 == True:
+            self._player_collect(1)
 
+        #check for the if the game ended
         if player1 == True or player2 == True:
             self._winner()
             return True
@@ -91,7 +100,7 @@ class Mancala:
         #prints out the board facing player 1
         for i in range(0,8):
             if i == 0 or i == 7:
-                print('[  ' + str(self._board[i]) + '  ]')
+                print('[  ' + str(self._board[i]) + ' ]')
             else:
                 print('[' + str(self._board[i]) + '] ' + '[' + str(self._board[-i]) + '] ' + str(i))
 

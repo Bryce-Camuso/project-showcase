@@ -4,7 +4,7 @@ import random
 
 
 def AI_game_loop():
-    #set up Ai
+    #set up Ai and variables
     game =  MancalaAi()
     playerInput = None
     while not game.end_of_game():
@@ -12,15 +12,23 @@ def AI_game_loop():
         game.print_board()
         playerInput = int(input())
 
-        validMove = game.move(playerInput, 1)
+        validMove, extraTurn = game.move(playerInput, 1)
         if validMove == False:
             print('invalid move please retry.')
+
+        elif extraTurn:
+            print("You got an extra turn!")
         else:
-            print('AI\'s move is: ' + str(game.ai_move()))
+            extraTurn = True
+            while extraTurn:
+                aiMove, extraTurn = game.ai_move()
+                print('AI\'s move is: ' + str(aiMove))
+                if extraTurn:
+                    print('AI got and extra turn.')
 
 
 def two_player_game_loop():
-    #set up varables using the mancala class
+    #set up variables using the mancala class
     game = Mancala()
     turn = 1
     playerInput = None
@@ -37,12 +45,15 @@ def two_player_game_loop():
             for i in range(0, end):
                 playerInput -= 1
         #makes a move if valid else the class returns false to signle it did nothing.
-        validMove = game.move(playerInput, turn)
-        if validMove == True:
+        validMove, extraTurn = game.move(playerInput, turn)
+        if validMove and not extraTurn:
             if turn == 1:
                 turn = 2
             else:
                 turn = 1
+        elif extraTurn:
+            print("player " + str(turn) + " got an extra turn!")
+
         else:
             print('invalid move please retry.')
 
