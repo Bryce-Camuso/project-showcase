@@ -6,25 +6,17 @@ class MancalaAi(Mancala):
 
 
 
-    def __init__(self):
+    def __init__(self, level):
+        '''
+        This class expects the level of AI as an input. The levels are Easy = 0, Medium = 1, Hard = 2
+
+        Easy makes random moves.
+        Medium makes always tries to score as many points as it can on it's turn but doesn't consider the player or next turn.
+        Hard looks for the best score for itself in the next two turns based on its moves and the player's moves.
+        '''
         super().__init__()
-        #Easy is level 0 Medium is level 1 Hard is level 3
-        self._level = None
-        notPicked = True
+        self._level = level
         self._playtree = NAryTree(6)
-        while notPicked:
-            print('What level of AI would you like to use? (Easy, Medium, or Hard)')
-            playerInput = input().lower()
-            if playerInput == 'easy' or playerInput == '2':
-                self._level = 0
-            elif playerInput == 'medium' or playerInput == 'm':
-                self._level = 1
-            elif playerInput == 'hard' or playerInput == 'h':
-                self._level = 2              
-            else:
-                print("invalid input")
-            if self._level is not None:
-                notPicked = False
 
 
     def _easy(self):
@@ -32,7 +24,7 @@ class MancalaAi(Mancala):
     
     def _extra_turn_check(self):
         numberCheck = 1
-        #check if the AI can gain an extra turn
+        #check if the AI can gain an extra turn by seeing if the value in a pile is the amount needed to get to the goal.
         for i in range(13,7, -1):
             if self._board[i] == numberCheck:
                 return i
@@ -42,6 +34,7 @@ class MancalaAi(Mancala):
     
     def _score_point(self):
         numberCheck = 7
+        #checks if it can score by seeing if the value to get to its goal is smaller then what is in the slots pile.
         for i in range(8, 14):
             if self._board[i] >= numberCheck:
                 return i
@@ -51,7 +44,7 @@ class MancalaAi(Mancala):
 
     def _medium(self):
         move = None
-
+        #looks to see if it can get an extra turn. If it cann't it looks for if it can score a point. If it cann't it makes a random move.
         move = self._extra_turn_check()
         if move is None:
             move = self._score_point()
@@ -85,9 +78,7 @@ class MancalaAi(Mancala):
         
         return True, False, board
     
-    def _posible_player_moves(self, Opturns, node):
-        #print(node.get_element())
-    
+    def _posible_player_moves(self, Opturns, node):    
         for i in range(1,7):
             validMove, extraTurn, newBoard = self._test_move(i, 1, node.get_element())
             if validMove and extraTurn:
@@ -114,7 +105,7 @@ class MancalaAi(Mancala):
             for i in range(8,14):
                 validMove, extraTurn, newBoard = self._test_move(i, 2, node.get_element())
                 if validMove and extraTurn:
-                    #(7 - (i % 7)) - 1 is used to as the move is considered 1-6 while the array is 0-5 with 13 = move 1. Thus 13 % 7 = 6 & 7-6 = 1. so move 1 is slot 0 in the tree array
+                    #(7 - (i % 7)) - 1 is used as the move is considered 1-6 while the array is 0-5 with 13 = move 1. Thus 13 % 7 = 6 & 7-6 = 1. so move 1 is slot 0 in the tree array
                     node.set_children(NAryTree(6,newBoard, node), (7 - (i % 7)) - 1)
                     self._posible_moves(Opturns, node.get_child(7 - (i % 7) - 1))
 
@@ -137,8 +128,11 @@ class MancalaAi(Mancala):
 
 
     def _hard(self):
+        #resets the tree
         self._playtree = NAryTree(6)
         self._playtree.set_element(self._board)
+
+        #finds the best position 
         self._posible_moves(2, self._playtree)
         maxScore = float('-inf')
         index = 0
@@ -155,6 +149,11 @@ class MancalaAi(Mancala):
 
     
     def ai_move(self):
+        '''
+        Ai makes a move based on the AI level.
+
+        The method returns what the AI did based on printed board and if it received an extra turn.
+        '''
         aiMove = None
         validMove = False
         extraTurn = False
@@ -165,7 +164,6 @@ class MancalaAi(Mancala):
                 aiMove = self._medium()
             else:
                 aiMove = self._hard()
-                #print(aiMove)
             validMove, extraTurn = self.move(aiMove, 2)
 
         return 7 - (aiMove % 7), extraTurn
@@ -184,7 +182,7 @@ def _print_tree(node, level):
     
 
 def _test():
-    game = MancalaAi()
+    game = MancalaAi(2)
 
     game.move(3,1)
     game.move(6,1)
