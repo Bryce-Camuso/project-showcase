@@ -2,7 +2,18 @@
 class Mancala:
 
     def __init__(self):
-        #1st slot is second players bank. 7th slot is first players bank.
+        '''
+        This class expects 0 inputs. The board is represented as an array were slots 1-6 are player 1 and 8-13 are player 2 with 13 = 1 in the print method (see below). Slots 0 is player 2's goal and slot 7 is player 1's goal.
+
+          [  0  ] <-- Player 2's goal
+        1 [4] [4] 13 (1)
+        2 [4] [4] 12 (2)
+        3 [4] [4] 11 (3)
+        4 [4] [4] 10 (4)
+        5 [4] [4] 9  (5)
+        6 [4] [4] 8  (6)
+          [  0  ] <-- Player 1's goal
+        '''
         self._board = [0,4,4,4,4,4,4,0,4,4,4,4,4,4]
 
     def _valid_move(self, index, player):
@@ -18,6 +29,11 @@ class Mancala:
             return True
 
     def move(self, index, player):
+        '''
+        This method takes the index of the board array representing the player's move and which player represented as 1 or 2 for player 1 and player 2.
+        
+        This method returns a tuple of bool values. The first value represents if the move was successful. The second represents if the player received an extra turn.
+        '''
         #First return condintional signles that the move was succsesful. The second return condintional specifies if the person getts another turn.
         #check for valid moves
         if not self._valid_move(index, player):
@@ -74,6 +90,12 @@ class Mancala:
         print(str(self._board[7]) + ' = ' + str(self._board[0]))
 
     def end_of_game(self):
+        '''
+        
+        This method checks if the game has ended. If one side is left with 0 marbles the game is considered over. If found to be true the class will total the remaining marbles on the board and give them to the associated player. Once complete it will print out the winner and final score.
+
+        This method will return True if the game has ended and False otherwise.
+        '''
         player1 = True
         player2 = True
         #checks if either player has no marbles left.
@@ -97,12 +119,27 @@ class Mancala:
             return False
 
     def print_board(self):
-        #prints out the board facing player 1
+        '''
+        This method prints out the board with player 2's goal on the top and player 1's goal on the bottom . Player 1 is on the left with marbles moving down. Player 2 is on the right with marbles moveing up. Player 1's slots are 1-6 as printed. Player 2's slots are 8-13 with 13 = 1 in the print out (see below).
+
+          [  0  ] <-- Player 2's goal
+        1 [4] [4] 13 (1)
+        2 [4] [4] 12 (2)
+        3 [4] [4] 11 (3)
+        4 [4] [4] 10 (4)
+        5 [4] [4] 9  (5)
+        6 [4] [4] 8  (6)
+          [  0  ] <-- Player 1's goal
+        '''
         for i in range(0,8):
-            if i == 0 or i == 7:
-                print('[  ' + str(self._board[i]) + ' ]')
+            if i == 0:
+                print('  [  ' + str(self._board[i]) + '  ] <-- Player 2\'s goal')
+                
+            elif i == 7:
+                print('  [  ' + str(self._board[i]) + '  ] <-- Player 1\'s goal')
+            
             else:
-                print('[' + str(self._board[i]) + '] ' + '[' + str(self._board[-i]) + '] ' + str(i))
+                print(str(i) + ' [' + str(self._board[i]) + '] ' + '[' + str(self._board[-i]) + '] ' + str(i))
 
 
 

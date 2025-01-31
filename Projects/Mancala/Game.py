@@ -4,10 +4,27 @@ import random
 
 
 def AI_game_loop():
-    #set up Ai and variables
-    game =  MancalaAi()
+    #set up Ai and variables/picking Ai level
+    notPicked = True
+    level = None
+    while notPicked:
+            print('What level of AI would you like to use? (Easy, Medium, or Hard)')
+            playerInput = input().lower()
+            if playerInput == 'easy' or playerInput == 'e':
+                level = 0
+            elif playerInput == 'medium' or playerInput == 'm':
+                level = 1
+            elif playerInput == 'hard' or playerInput == 'h':
+                level = 2              
+            else:
+                print("invalid input")
+            if level is not None:
+                notPicked = False
+
+    game =  MancalaAi(level)
     playerInput = None
     while not game.end_of_game():
+        #player's turn
         print("What would you like to do?")
         game.print_board()
         playerInput = int(input())
@@ -19,8 +36,9 @@ def AI_game_loop():
         elif extraTurn:
             print("You got an extra turn!")
         else:
+            #Ai turn
             extraTurn = True
-            while extraTurn:
+            while extraTurn and not game.end_of_game():
                 aiMove, extraTurn = game.ai_move()
                 print('AI\'s move is: ' + str(aiMove))
                 if extraTurn:
@@ -66,11 +84,15 @@ def two_player_game_loop():
 
 
 
-
-
-print('Would you like to play Mancala with 1 or 2 players? (1 or 2)')
-playerInput = input()
-if playerInput == '2':
-    two_player_game_loop()
-else: 
-    AI_game_loop()
+notPlaying = True
+while notPlaying:
+    print('Would you like to play Mancala with 1 or 2 players? (1 or 2)')
+    playerInput = input()
+    if playerInput == '2':
+        two_player_game_loop()
+        notPlaying = False
+    elif playerInput == '1':
+        AI_game_loop()
+        notPlaying = False
+    else:
+        print('invalid input please retry.')
